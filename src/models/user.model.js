@@ -54,13 +54,48 @@ const userSchema=new Schema(
 //FOR ENCRYPTION OF PASSWORD
 //use async as it takes time
 userSchema.pre("save", async function(next) {   //means before saving the document cheack //dont use arrow function as "this" functionallity is not avil in arrow
-    if(this.isModified("password")){
+    if(this.isModified("password")){  
         //this if ensures passowrd is encrypted only when password field is updated
 
         this.password=bcrypt.hash(this.password, 8)         //what we have to hash and number of rounds
     next();
     }
 }) 
+userSchema.methods.isPasswordCorrect= async function (password){//  isPasswordCorrect ek custom function hai jo har user document ke saath attach ho jayega.
+    return await bcrypt.compare(password, this.password)    //password: user entered  //this.pasword: password stored in db(in hashed) so we use bcrypt.compare because the password stored in the db is hashed by the bcrypt 
+}
+
+
+//generate access tioken and refresh token:
+userSchema.methods.generateAccessToken =function(){
+    //we can either return or store it in any variable
+    return jwt.sign(
+        {//payload
+            _id: this._id,     //only this is sufficient
+            email: this.email,
+            username: this.username,
+            fullname:this.fullname
+        },
+        process.env.ACCESS_TOKEN_SECRET,
+        {//used for expiry
+            expiresIn: process.env.ACCESS_TOKEN_EXPIRY
+        }
+    )
+};
+
+userSchema.methods.generateRefreshToken =function(){
+    //we can either return or store it in any variable
+    return jwt.sign(
+        {//payload
+            _id: this._id,     //less payloads for the refresh token
+            
+        },
+        process.env.REFRESH_TOKEN_SECRET,
+        {//used for expiry
+            expiresIn: process.env.REFRESH_TOKEN_EXPIRY
+        }
+    )
+};
 
 
 export const User= mongoose.model("User", userSchema)
