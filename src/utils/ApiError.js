@@ -10,7 +10,7 @@
         super(message)       //calls the parent Error class constructor
         this.statusCode= statusCode   //
         this.data=null
-        this.message=message
+        this.message=message 
         this.success=false
         this.errors= errors
 

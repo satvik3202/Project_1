@@ -2,8 +2,10 @@
 import dotenv from "dotenv"
 
 dotenv.config({
-    path: './env'
+    path: './.env'
 })
+
+import {app} from "./app.js";
 
 
 import connectDB from "./db/index.js";  //no need to write the index.js as JS will automatically look for index.js or db.js
