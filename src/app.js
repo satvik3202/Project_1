@@ -31,8 +31,19 @@ app.use(cookieParser());
 
 
 
-//Routes import:
+//Routes import: 
 import userRouter from './routes/user.routes.js';
+
 //Routes decalaration:
+app.use("/api/v1/users", userRouter)
+
+
+
+
+
+
+
+
+
 
 export {app}
